@@ -1,42 +1,52 @@
-print ("")
-print ("  ______                                    _____   ______    ______   __        ______ ")
-print (" /      \                                  |     \ /      \  /      \ |  \      /      \ ")
-print ("|  $$$$$$\ _______    ______   _______      \$$$$$|  $$$$$$\|  $$$$$$\| $$   __|  $$$$$$\  ______ ")
-print ("| $$__| $$|       \  /      \ |       \       | $$| $$$\| $$| $$$\| $$| $$  /  \\$$__| $$ /      \ ")
-print ("| $$    $$| $$$$$$$\|  $$$$$$\| $$$$$$$\ __   | $$| $$$$\ $$| $$$$\ $$| $$_/  $$ |     $$|  $$$$$$\ ")
-print ("| $$$$$$$$| $$  | $$| $$  | $$| $$  | $$|  \  | $$| $$\$$\$$| $$\$$\$$| $$   $$ __\$$$$$\| $$   \$$ ")
-print ("| $$  | $$| $$  | $$| $$__/ $$| $$  | $$| $$__| $$| $$_\$$$$| $$_\$$$$| $$$$$$\|  \__| $$| $$ ")
-print ("| $$  | $$| $$  | $$ \$$    $$| $$  | $$ \$$    $$ \$$  \$$$ \$$  \$$$| $$  \$$\\$$    $$| $$ ")
-print (" \$$   \$$ \$$   \$$  \$$$$$$  \$$   \$$  \$$$$$$   \$$$$$$   \$$$$$$  \$$   \$$ \$$$$$$  \$$ ")
-print ("")
+#!/bin/env python3
 from telethon.sync import TelegramClient
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty, InputPeerChannel, InputPeerUser
 from telethon.errors.rpcerrorlist import PeerFloodError, UserPrivacyRestrictedError
 from telethon.tl.functions.channels import InviteToChannelRequest
-import sys
+import configparser
+import os, sys
 import csv
 import traceback
 import time
 import random
 
-api_id = 1000000   #Enter Your 7 Digit Telegram API ID.
-api_hash = 'f6bcb1cc65d723e3b63048ad10b56778'   #Enter Yor 32 Character API Hash
-phone = '+910000000000'   #Enter Your Mobilr Number With Country Code.
-client = TelegramClient(phone, api_id, api_hash)
-async def main():
-    # Now you can use all client methods listed below, like for example...
-    await client.send_message('me', 'Hello !!!!!')
+re="\033[1;31m"
+gr="\033[1;32m"
+cy="\033[1;36m"
 
+def banner():
+    print(f"""
+     **     *******  *******  **     ** ********   *******   ****     **
+    ****   /**////**/**////**//**   ** /**/////   **/////** /**/**   /**
+   **//**  /**   /**/**   /** //** **  /**       **     //**/**//**  /**
+  **  //** /******* /*******   //***   /******* /**      /**/** //** /**
+ **********/**////  /**////     **/**  /**////  /**      /**/**  //**/**
+/**//////**/**      /**        ** //** /**      //**     ** /**   //****
+/**     /**/**      /**       **   //**/******** //*******  /**    //***
+//      // //       //       //     // ////////   ///////   //      /// 
+        """)
 
-SLEEP_TIME_1 = 100
-SLEEP_TIME_2 = 100
-with client:
-    client.loop.run_until_complete(main())
+cpass = configparser.RawConfigParser()
+cpass.read('config.data')
+
+try:
+    api_id = cpass['cred']['id']
+    api_hash = cpass['cred']['hash']
+    phone = cpass['cred']['phone']
+    client = TelegramClient(phone, api_id, api_hash)
+except KeyError:
+    os.system('clear')
+    banner()
+    print(re+"[!] run python3 setup.py first !!\n")
+    sys.exit(1)
+
 client.connect()
 if not client.is_user_authorized():
     client.send_code_request(phone)
-    client.sign_in(phone, input('40779'))
+    os.system('clear')
+    banner()
+    client.sign_in(phone, input(gr+'[+] Enter the code: '+re))
 
 users = []
 with open(r"Scrapped.csv", encoding='UTF-8') as f:  #Enter your file name
